@@ -26,16 +26,20 @@ public class Dipendente {
     @Column(nullable = false)
     private String email;
 
+    @Column(nullable = false)
+    private String password;
+
     @Column(name = "foto_profilo", nullable = false)
     private String fotoProfilo;
 
     public Dipendente() {}
 
-    public Dipendente(String username, String nome, String cognome, String email, String fotoProfilo) {
+    public Dipendente(String username, String nome, String cognome, String email, String password, String fotoProfilo) {
         this.username = username;
         this.nome = nome;
         this.cognome = cognome;
         this.email = email;
+        this.password = password;
         this.fotoProfilo = fotoProfilo;
     }
 
@@ -73,6 +77,14 @@ public class Dipendente {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getFotoProfilo() {

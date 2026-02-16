@@ -16,5 +16,9 @@ public record DipendenteDTO (
      String cognome,
      @NotBlank(message = "L'email deve essere inserita")
      @Email(message = "Indirizzo email non valido")
-     String email){
+     String email,
+     @NotBlank(message = "La password deve essere inserita")
+     @Size(min = 8, message = "La password deve contenere almeno 8 caratteri")
+     String password
+){
 }

@@ -45,7 +45,7 @@ public class DipendentiService {
         if (this.dipendentiRepository.existsByUsername(body.username())) throw new BadRequestException("Username già in uso");
         if (this.dipendentiRepository.existsByEmail(body.email())) throw new BadRequestException("Email già in uso");
         String imageUrl = "https://ui-avatars.com/api/?name=" + body.nome() + "+" + body.cognome();
-        Dipendente nuovoDipendente = new Dipendente(body.username(), body.nome(), body.cognome(), body.email(), imageUrl);
+        Dipendente nuovoDipendente = new Dipendente(body.username(), body.nome(), body.cognome(), body.email(), body.password(), imageUrl);
         this.dipendentiRepository.save(nuovoDipendente);
         System.out.println("Dipendente salvato");
         return nuovoDipendente;
@@ -63,6 +63,7 @@ public class DipendentiService {
         found.setNome(body.nome());
         found.setCognome(body.cognome());
         found.setEmail(body.email());
+        found.setPassword(body.password());
         this.dipendentiRepository.save(found);
         System.out.println("Dipendente aggiornato");
         return found;
