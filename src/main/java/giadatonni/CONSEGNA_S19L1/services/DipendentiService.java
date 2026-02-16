@@ -83,4 +83,8 @@ public class DipendentiService {
         }
     }
 
+    public Dipendente findByEmail(String email){
+        return this.dipendentiRepository.findByEmail(email).orElseThrow(() -> new BadRequestException("Dipendente non trovato"));
+    }
+
 }

@@ -20,6 +20,12 @@ public class ErrorsHandler {
         return new ErrorDTO(ex.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(UnauthorizedException.class)
+    public ErrorDTO handleUnauthorized(UnauthorizedException ex){
+        return new ErrorDTO(ex.getMessage());
+    }
+
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ValidationException.class)
     public ErrorsDTO handleBadRequest(ValidationException ex){
