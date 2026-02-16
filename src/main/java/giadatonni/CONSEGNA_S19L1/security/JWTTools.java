@@ -19,7 +19,7 @@ public class JWTTools {
 
         return Jwts.builder()
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() * 1000 * 60 * 60 * 7))
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 7))
                 .subject(String.valueOf(dipendente.getDipendenteId()))
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
                 .compact();
