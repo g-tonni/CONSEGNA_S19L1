@@ -1,0 +1,24 @@
+package giadatonni.CONSEGNA_S19L1.config;
+
+import com.cloudinary.Cloudinary;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Configuration
+public class Config {
+
+    @Bean
+    public Cloudinary getImageUploader(@Value("${cloudinary.name}") String cloudName,
+                                       @Value("${cloudinary.apikey}") String apyKey,
+                                       @Value("${cloudinary.secret}") String apySecret){
+        Map<String, String> configuration = new HashMap<>();
+        configuration.put("cloud_name", cloudName);
+        configuration.put("api_key", apyKey);
+        configuration.put("api_secret", apySecret);
+        return new Cloudinary(configuration);
+    }
+}
