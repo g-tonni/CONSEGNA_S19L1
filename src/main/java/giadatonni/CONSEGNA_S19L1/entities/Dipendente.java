@@ -1,13 +1,20 @@
 package giadatonni.CONSEGNA_S19L1.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "dipendenti")
-public class Dipendente {
+@JsonIgnoreProperties({"password", "role", "accountNonExpired", "accountNonLocked", "authorities", "credentialsNonExpired", "enabled"})
+public class Dipendente implements UserDetails {
 
     @Id
     @GeneratedValue
@@ -29,6 +36,10 @@ public class Dipendente {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     @Column(name = "foto_profilo", nullable = false)
     private String fotoProfilo;
 
@@ -40,6 +51,7 @@ public class Dipendente {
         this.cognome = cognome;
         this.email = email;
         this.password = password;
+        this.role = Role.USER;
         this.fotoProfilo = fotoProfilo;
     }
 
@@ -77,6 +89,11 @@ public class Dipendente {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(this.role.name()));
     }
 
     public String getPassword() {

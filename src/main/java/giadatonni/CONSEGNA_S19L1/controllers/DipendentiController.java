@@ -6,6 +6,8 @@ import giadatonni.CONSEGNA_S19L1.payload.DipendenteDTO;
 import giadatonni.CONSEGNA_S19L1.services.DipendentiService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -25,40 +27,37 @@ public class DipendentiController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('SUPERADMIN', 'ADMIN')")
     public Page<Dipendente> getDipendenti(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(defaultValue = "cognome") String orderBy){
         return this.dipendentiService.getDipendenti(page, size, orderBy);
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Dipendente postDipendente(@RequestBody @Validated DipendenteDTO body, BindingResult validationResults){
-        if (validationResults.hasErrors()){
-            List<String> errors = validationResults.getFieldErrors().stream().map(fieldError -> fieldError.getDefaultMessage()).toList();
-            throw new ValidationException(errors);
-        } else {
-           return this.dipendentiService.postDipendente(body);
-        }
-    }
-
     @GetMapping("/{dipendenteId}")
+    @PreAuthorize("hasAnyAuthority('SUPERADMIN', 'ADMIN')")
     public Dipendente getDipendenteById(@PathVariable UUID dipendenteId){
         return this.dipendentiService.findById(dipendenteId);
     }
 
-    @PutMapping("/{dipendenteId}")
-    public Dipendente putDipendente(@PathVariable UUID dipendenteId, @RequestBody @Validated DipendenteDTO body, BindingResult validationResults){
+    @GetMapping("/me")
+    @PreAuthorize("hasAnyAuthority('SUPERADMIN', 'ADMIN')")
+    public Dipendente getMe(@AuthenticationPrincipal Dipendente dipendenteAutenticato){
+        return this.dipendentiService.findById(dipendenteAutenticato.getDipendenteId());
+    }
+
+    @PutMapping("/me")
+    public Dipendente putDipendente(@AuthenticationPrincipal Dipendente dipendenteAutenticato, @RequestBody @Validated DipendenteDTO body, BindingResult validationResults){
         if (validationResults.hasErrors()){
             List<String> errors = validationResults.getFieldErrors().stream().map(fieldError -> fieldError.getDefaultMessage()).toList();
             throw new ValidationException(errors);
         } else {
-            return this.dipendentiService.putDipendente(dipendenteId, body);
+            return this.dipendentiService.putDipendente(dipendenteAutenticato.getDipendenteId(), body);
         }
     }
 
-    @PatchMapping("/{dipendenteId}/fotoProfilo")
-    public Dipendente uploadImage(@RequestParam("foto_profilo") MultipartFile file, @PathVariable UUID dipendenteId) {
+    @PatchMapping("/me/fotoProfilo")
+    public Dipendente uploadImage(@AuthenticationPrincipal Dipendente dipendenteAutenticato, @RequestParam("foto_profilo") MultipartFile file, @PathVariable UUID dipendenteId) {
         // System.out.println(file.getOriginalFilename());
-        return this.dipendentiService.uploadFotoProfilo(dipendenteId, file);
+        return this.dipendentiService.uploadFotoProfilo(dipendenteAutenticato.getDipendenteId(), file);
     }
 
     /*@DeleteMapping("/{dipendenteId}")

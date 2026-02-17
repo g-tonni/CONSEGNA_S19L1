@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,10 +23,12 @@ import java.util.UUID;
 public class DipendentiService {
     private final DipendentiRepository dipendentiRepository;
     private final Cloudinary cloudinaryUploader;
+    private final PasswordEncoder passwordEncoder;
 
-    public DipendentiService(DipendentiRepository dipendentiRepository, Cloudinary cloudinaryUploader) {
+    public DipendentiService(DipendentiRepository dipendentiRepository, Cloudinary cloudinaryUploader, PasswordEncoder passwordEncoder) {
         this.dipendentiRepository = dipendentiRepository;
         this.cloudinaryUploader = cloudinaryUploader;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Page<Dipendente> getDipendenti(int page, int size, String orderBy){
@@ -45,7 +48,7 @@ public class DipendentiService {
         if (this.dipendentiRepository.existsByUsername(body.username())) throw new BadRequestException("Username già in uso");
         if (this.dipendentiRepository.existsByEmail(body.email())) throw new BadRequestException("Email già in uso");
         String imageUrl = "https://ui-avatars.com/api/?name=" + body.nome() + "+" + body.cognome();
-        Dipendente nuovoDipendente = new Dipendente(body.username(), body.nome(), body.cognome(), body.email(), body.password(), imageUrl);
+        Dipendente nuovoDipendente = new Dipendente(body.username(), body.nome(), body.cognome(), body.email(), passwordEncoder.encode(body.password()), imageUrl);
         this.dipendentiRepository.save(nuovoDipendente);
         System.out.println("Dipendente salvato");
         return nuovoDipendente;
@@ -63,7 +66,7 @@ public class DipendentiService {
         found.setNome(body.nome());
         found.setCognome(body.cognome());
         found.setEmail(body.email());
-        found.setPassword(body.password());
+        found.setPassword(passwordEncoder.encode(body.password()));
         this.dipendentiRepository.save(found);
         System.out.println("Dipendente aggiornato");
         return found;
