@@ -44,8 +44,6 @@ public class JWTTCheckFilter extends OncePerRequestFilter {
         Dipendente dipendente = this.dipendentiService.findById(userId);
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(dipendente, null, dipendente.getAuthorities());
-        System.out.println("User: " + authentication.getName());
-        System.out.println("Authorities: " + authentication.getAuthorities());
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
